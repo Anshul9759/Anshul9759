@@ -1,0 +1,122 @@
+# pyttsx3 = python text to speech
+# speech_recognition = used to convert spoken words into text and work API'S
+# automate_wikipedia = used to automatic and work the wikipedia
+# webbrowser = used to automate webbrowsers
+# smtplib = sending emails
+# os = used to used/interact with operating system
+# datetime = used to work the date time
+
+import pyttsx3
+import speech_recognition as sr
+import wikipedia
+import webbrowser
+import smtplib
+import os
+import datetime
+
+# 1 is for female voice and 0 is for male voice
+
+engine = pyttsx3.init("sapi5")
+voices = engine.getProperty("voices")
+engine.setProperty("voice", voices[0].id)
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+def wishme():
+    hour = int(datetime.datetime.now().hour)
+    """
+    12:00- noon
+    1:00 pm- morning/ 13:00 - afternoon
+    18:00 - evening
+    """
+
+
+    if hour>=0 and  hour<=12:
+        speak("Good morning my dear friend")
+
+    elif hour>=12 and hour<18:
+        speak("Good afternoonmy dear friend")
+    else:
+        speak("Good evening my dear friend")
+        speak("Let me know can I help you ? what are looking for?")
+
+
+def takecommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+
+        print("Listening to you Anshul.....")
+
+        r.pause_threshold = 1
+        audio = r.listen(source)
+try:
+      print("Recognizing your voice")
+      query = r.recognize_google(audio, language="en_in")
+      print(f"My dear friend you said: {query}\n")
+
+except Exception as e:
+
+      print("Anshul say that again please......")
+      return "None"
+      return query
+
+def sendEmail(to, content):
+
+     server=smtplib.SMTP("smtp.gamil.com", 587)
+     server.ehlo()
+     server.starttls()
+     server.login("anshul18dubey@gail.com", "98975516")
+     server.sendmail("21bme004@nith.ac.in", to, content)
+     server.close()
+
+if __name__== '__main__':
+    wishme()
+
+    while True:
+        query = takecommand().lower()
+
+        if'open wikipedia' in query:
+         speak('searching wikipedia...')
+
+        query = query.replace("wikipedia", "")
+        results = wikipedia.summary(query, sentences=2)
+        speak("According to wikipedia")
+    print(results)
+    speak(results)
+
+if 'open notepad' in query:
+    npath = "C:\\Windows\\system32\\notepad.exe"
+    os.startfile(npath)
+
+elif 'open paint' in query:
+         npath = "C:\\Windows\\system32\\mspaint.exe"
+         os.startfile(npath)
+
+elif 'open youtube' in query:
+     webbrowser.open('youtube.com')
+elif 'open classroom' in query:
+    webbrowser.open('https://classroom.google.com')
+
+elif 'open google' in query:
+    webbrowser.open("google.com")
+
+elif 'tell me the time' in query:
+    strTime = datetime.datetime.now().strftime("H:%M:%S")
+    speak(f"My dear friend, the time is{strTime}")
+elif 'open whattapp' in query:
+    webbrowser.open("C:\\Users\\Acer\\AppData\\Local\\WhatsApp\\WhatsApp.exe")
+elif 'email to other friend' in query:
+    try:
+        speak("What should T send")
+        content = takecommand()
+        to = " 21bme004@nith.ac.in"
+        sendEmail(to, content)
+        speak("Your email has been succesfully")
+
+    except Exception as e:
+        print(e)
+        speak("My dear friend.... I am unable to send  the email... ""please address the error")
+
